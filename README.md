@@ -1,5 +1,6 @@
-### What to say?
-# For now I'll just point to github.com/Neutze-lab/no-observable since that is the repo where my code lies. This is a companion page for scientific publication "No observable non-thermal effect of microwave radiation on the growth of microtubules" available at https://www.nature.com/articles/s41598-024-68852-3
+# For now I'll just point to github.com/Neutze-lab/no-observable since that is the repo where my code lies. 
+
+## This is a companion page for scientific publication "No observable non-thermal effect of microwave radiation on the growth of microtubules" available at https://www.nature.com/articles/s41598-024-68852-3
 
 <!--
 **greger-hammarin/greger-hammarin** is a ✨ _special_ ✨ repository because its `README.md` (this file) appears on your GitHub profile.
