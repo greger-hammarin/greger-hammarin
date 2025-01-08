@@ -1,0 +1,159 @@
+import random
+import time
+import winsound
+
+def play_sound(correct):
+    if correct:
+        # Ljudsignal för rätt svar ([Hz], [ms])
+        winsound.Beep(2500, 150)
+        winsound.Beep(4500, 150)
+        winsound.Beep(3500, 150)
+        winsound.Beep(5500, 200)
+    else:
+        # Ljudsignal för fel svar ([Hz], [ms])
+        winsound.Beep(1500, 250)
+        winsound.Beep(4500, 250)
+        winsound.Beep(1500, 1000)
+
+def intro():
+    print("\nVälkommen till Multiplikationsäventyret: Tabellarias Väktare!")
+    print("\nDin uppgift är att samla Multiplikationskristaller och rädda världen Tabellaria från Magister Minus.")
+    print("\nVarje region representerar en multiplikationstabell. Svara rätt för att klara utmaningarna och låsa upp nästa område.")
+
+def choose_character():
+    characters = {
+        1: {"name": "Krigare", "skill": "Saktar ner tiden"},
+        2: {"name": "Trollkarl", "skill": "Dubbel poäng"},
+        3: {"name": "Bågskytt", "skill": "Hoppa över fråga"}
+    }
+
+    print("\nVälj din hjälte:")
+    for key, char in characters.items():
+        print(f"{key}: {char['name']} - {char['skill']}")
+
+    choice = int(input("\nAnge numret för din hjälte: "))
+    if choice in characters:
+        print(f"\nDu valde {characters[choice]['name']}! Lycka till på ditt äventyr.\n")
+        return characters[choice]
+    else:
+        print("\nOgiltigt val. Försök igen.")
+        return choose_character()
+
+def choose_difficulty():
+    difficulty = {
+        1: {"name": "Lågstadieelev", "skill": "Lätt", "antal": int(3), "tabell": int(10), "tid": int(15),"andel": 0.6},
+        2: {"name": "Mellanstadieelev", "skill": "Svårare", "antal": int(7), "tabell": int(10), "tid": int(12),"andel": 0.7},
+        3: {"name": "Högstadieelev", "skill": "Svårast", "antal": int(12), "tabell": int(12), "tid": int(7),"andel": 0.8}
+    }
+
+    print("\nVälj din svårighetsgrad:")
+    for key, char in difficulty.items():
+        print(f"{key}: {char['name']} - {char['skill']}")
+
+    choice = int(input("\nAnge numret för din svårighetsgrad: "))
+    if choice in difficulty:
+        print(f"\nDu är en {difficulty[choice]['name']}! Börja nu ditt äventyr.\n")
+        return difficulty[choice]
+    else:
+        print("\nOgiltigt val. Försök igen.")
+        return choose_character()
+
+
+def generate_question(table, difficulty):
+    num = random.randint(1, difficulty['tabell'])
+    question = f"Vad är {table} x {num}? "
+    correct_answer = table * num
+    return question, correct_answer
+
+def play_region(table, region_name, max_time, region_score,hoppa_over, difficulty):
+    print(f"\nVälkommen till {region_name}! Här måste du bemästra tabell {table}.")
+    score = 0
+    start_time = time.time()
+
+    for _ in range(difficulty['antal']):
+        question, correct_answer = generate_question(table, difficulty)
+        try:
+            answer = int(input(question))
+            elapsed_time = time.time() - start_time
+            if elapsed_time > max_time:
+                print("\nTiden är ute! Du hann inte klart regionen. Du tappade alla kristaller")
+                score = 0
+                return score
+            if answer == correct_answer:
+                print(f"Rätt svar! Du fick {region_score} kristall.")
+                play_sound(True)
+                score += region_score
+            elif hoppa_over:
+                print(f"Som bågskytten räddade du dig trots fel svar! Det rätta svaret var {correct_answer}. Du får {region_score} kristall.")
+                score += region_score
+                hoppa_over = False
+                play_sound(False)
+            else:
+                print(f"Fel svar! Det rätta svaret är {correct_answer}. Du tappade {region_score} kristall.")
+                score -= region_score
+                play_sound(False)
+        except ValueError:
+            print("Ogiltigt svar. Försök med en siffra nästa gång.")
+
+    elapsed_time = time.time() - start_time
+    remaining_time = max_time - elapsed_time
+    print(f"\nDu klarade av {region_name} med {int(remaining_time)} sekunder tillgodo. Du samlade {score} kristaller.\n")
+    return score
+
+def main():
+    intro()
+    character = choose_character()
+    difficulty = choose_difficulty()
+
+    regions = [
+        {"table": 3, "name": "Skogsriket"},
+        {"table": 4, "name": "Vulkanön"},
+        {"table": 6, "name": "Glaciärklyftan"},
+        {"table": 7, "name": "Ökenriket"},
+        {"table": 8, "name": "Bergsriket"},
+        {"table": 9, "name": "Storön"}
+    ]
+
+
+    total_score = 0
+
+    for region in regions:
+        region_time_limit = difficulty['antal']*difficulty['tid']*2 if character['name'] == 'Krigare' else difficulty['antal']*difficulty['tid']
+        region_score = 2 if character['name'] == 'Trollkarl' else 1
+        hoppa_over = True if character['name'] == 'Bågskytt' else False
+        total_score += play_region(region["table"], region["name"], region_time_limit, region_score, hoppa_over, difficulty)
+
+    print("\nGrattis! Du har klarat alla regioner.")
+    print(f"Totalt samlade du {total_score} kristaller!")
+    print("\nFörbered dig för slutstriden mot Magister Minus.")
+
+    if total_score>=len(regions)*difficulty['antal']*difficulty["andel"]:
+
+        # Slutstrid
+        print("\nSlutstrid!")
+        final_score = 0
+        for _ in range(difficulty['antal']*2):
+            table = random.randint(2, 10)
+            question, correct_answer = generate_question(table, difficulty)
+            try:
+                answer = int(input(question))
+                if answer == correct_answer:
+                    print("Rätt svar! Du skadade Magister Minus.")
+                    play_sound(True)
+                    final_score += 1
+                else:
+                    print(f"Fel svar! Det rätta svaret är {correct_answer}.")
+                    play_sound(False)
+            except ValueError:
+                print("Ogiltigt svar. Försök med en siffra nästa gång.")
+
+        if final_score >= difficulty['antal']*0.8:
+            print("\nGrattis! Du besegrade Magister Minus och räddade Tabellaria!")
+        else:
+            print("\nDu kämpade tappert, men Magister Minus var för stark. Försök igen!")
+    else:
+        print(f"\nDu har inte nog med kristaller för att utmana Magister Minus. Du hade behövt {int(len(regions)*difficulty['antal']*difficulty['andel'])} kristaller. Försök igen!")
+
+
+if __name__ == "__main__":
+    main()
