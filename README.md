@@ -2,6 +2,9 @@
 
 ## This is a companion page for scientific publication "No observable non-thermal effect of microwave radiation on the growth of microtubules" available at https://www.nature.com/articles/s41598-024-68852-3
 
+# Private projects:
+1. Multiplikationsäventyr - a simple math game in swedish
+
 <!--
 **greger-hammarin/greger-hammarin** is a ✨ _special_ ✨ repository because its `README.md` (this file) appears on your GitHub profile.
 
